@@ -16,7 +16,7 @@
             --hover-bg: #f1f5f9;
             --button-bg: #4f46e5;
             --button-hover: #4338ca;
-            --error-bg: #fef2f2;
+            --error-bg: #fff2f2;
             --error-text: #dc2626;
             --border-color: #e2e8f0;
             --secondary-text: #64748b;
@@ -50,7 +50,7 @@
             margin: 0;
             padding: 20px;
             background-color: var(--bg-color);
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: SimSun, "宋体", serif;
             line-height: 1.6;
             color: var(--text-color);
             min-height: 100vh;
@@ -179,6 +179,7 @@
             letter-spacing: 0.5px;
             box-shadow: 0 2px 4px var(--shadow-color);
             font-size: 1rem;
+            font-family: SimSun, "宋体", serif;
         }
 
         button:hover:not(:disabled) {
@@ -213,29 +214,37 @@
 
         .error-message {
             text-align: center;
-            padding: 40px;
+            padding: 24px;
             background: var(--error-bg);
-            border-radius: 16px;
+            border-radius: 12px;
             color: var(--error-text);
-            margin: 24px 0;
+            max-width: 400px;
+            margin: 24px auto;
         }
 
         .error-message .mdi {
-            font-size: 48px;
-            margin-bottom: 16px;
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--error-text);
         }
 
         .error-details {
-            margin-top: 16px;
+            margin-top: 12px;
             font-size: 0.9rem;
             opacity: 0.8;
         }
 
         .button-group {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 24px;
+            margin-top: 16px;
+        }
+
+        .button-group button {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            min-width: 100px;
         }
 
         @keyframes spin {
@@ -317,9 +326,9 @@
 
             <!-- 错误提示 -->
             <div class="error-message" v-if="error">
-                <span class="mdi mdi-alert"></span>
+                <span class="mdi mdi-alert-circle"></span>
                 <h2>加载失败</h2>
-                <p>{{ error }}</p>
+                <p>加载章节内容失败</p>
                 <p class="error-details" v-if="errorDetails">错误详情：{{ errorDetails }}</p>
                 <div class="button-group">
                     <button @click="goHome">
@@ -425,7 +434,7 @@
                 },
                 toggleTheme() {
                     this.isDarkMode = !this.isDarkMode
-                    localStorage.setItem('darkMode', this.isDarkMode)
+                    localStorage.setItem('darkMode', this.isDarkMode.toString())
                 },
                 retryLoad() {
                     const currentPath = decodeURIComponent(window.location.hash.slice(1))
@@ -433,14 +442,20 @@
                 }
             },
             mounted() {
-                // 检测系统主题偏好
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    this.isDarkMode = true;
+                // 从 localStorage 读取主题设置
+                const savedTheme = localStorage.getItem('darkMode');
+                if (savedTheme !== null) {
+                    this.isDarkMode = savedTheme === 'true';
+                } else {
+                    // 如果没有保存的设置，则使用系统主题
+                    this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 }
                 
                 // 监听系统主题变化
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                    this.isDarkMode = e.matches;
+                    if (localStorage.getItem('darkMode') === null) {
+                        this.isDarkMode = e.matches;
+                    }
                 });
                 
                 this.handleHashChange()
