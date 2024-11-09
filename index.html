@@ -4,45 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>轻小说阅读器</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.css">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
+    <div id="app" :class="{ 'dark-mode': isDarkMode }">
         <!-- 主页面 -->
         <div id="home" v-if="!isReading">
-            <h1>欢迎来到轻小说阅读站</h1>
+            <div class="theme-toggle" @click="toggleTheme">
+                <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
+            </div>
+            <h1>轻小说阅读站</h1>
+            <p class="subtitle">选择您想阅读的小说系列</p>
             <div class="novel-list">
-                <a href="#/溯境仙途/1.md" class="novel-link">
-                    <span class="mdi mdi-book"></span>溯境仙途
+                <a href="#/novel1/1.md" class="novel-link">
+                    <span class="mdi mdi-book"></span>
+                    <div class="novel-info">
+                        <h3>小说系列一</h3>
+                        <p>简介：这是第一个小说系列的简介...</p>
+                    </div>
                 </a>
                 <a href="#/novel2/1.md" class="novel-link">
-                    <span class="mdi mdi-book"></span>小说系列二
+                    <span class="mdi mdi-book"></span>
+                    <div class="novel-info">
+                        <h3>小说系列二</h3>
+                        <p>简介：这是第二个小说系列的简介...</p>
+                    </div>
                 </a>
-                <!-- 可以继续添加更多链接 -->
             </div>
         </div>
 
         <!-- 阅读页面 -->
         <div id="reader" v-if="isReading">
-            <div class="content" v-html="content"></div>
-            <div class="navigation">
-                <button @click="prevChapter" :disabled="currentChapter <= 1">
-                    <span class="mdi mdi-chevron-left"></span>上一章
-                </button>
-                <button @click="goHome">
-                    <span class="mdi mdi-home"></span>返回首页
-                </button>
-                <button @click="nextChapter">
-                    下一章<span class="mdi mdi-chevron-right"></span>
-                </button>
+            <!-- 加载动画 -->
+            <div class="loading" v-if="isLoading">
+                <div class="spinner"></div>
+                <p>正在加载...</p>
+            </div>
+
+            <!-- 错误提示 -->
+            <div class="error-message" v-if="error">
+                <span class="mdi mdi-alert"></span>
+                <h2>很抱歉，页面未找到</h2>
+                <p>{{ error }}</p>
+                <button @click="goHome">返回首页</button>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-wrapper" v-if="!error && !isLoading">
+                <div class="content" v-html="content"></div>
+                <div class="navigation">
+                    <button @click="prevChapter" :disabled="currentChapter <= 1">
+                        <span class="mdi mdi-chevron-left"></span>上一章
+                    </button>
+                    <button @click="goHome">
+                        <span class="mdi mdi-home"></span>返回首页
+                    </button>
+                    <button @click="nextChapter">
+                        下一章<span class="mdi mdi-chevron-right"></span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         const { createApp } = Vue
         
@@ -51,23 +78,34 @@
                 return {
                     content: '',
                     isReading: false,
+                    isLoading: false,
+                    error: null,
                     currentChapter: 1,
                     currentNovel: '',
-                    md: new markdownit()
+                    isDarkMode: localStorage.getItem('darkMode') === 'true'
                 }
             },
             methods: {
                 async loadContent(path) {
+                    this.isLoading = true
+                    this.error = null
+                    
                     try {
                         const response = await fetch(path)
+                        if (!response.ok) {
+                            throw new Error('这个章节还没有写完，请稍后再来~')
+                        }
                         const text = await response.text()
-                        this.content = this.md.render(text)
+                        this.content = marked(text)
                     } catch (error) {
-                        this.content = '<p>章节加载失败...</p>'
+                        this.error = error.message
+                    } finally {
+                        this.isLoading = false
                     }
                 },
                 goHome() {
                     this.isReading = false
+                    this.error = null
                     window.location.hash = ''
                 },
                 prevChapter() {
@@ -91,6 +129,10 @@
                     } else {
                         this.isReading = false
                     }
+                },
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode
+                    localStorage.setItem('darkMode', this.isDarkMode)
                 }
             },
             mounted() {
