@@ -10,120 +10,109 @@
     <style>
         :root {
             /* 亮色模式变量 */
-            --bg-primary: #f5e6d3;
-            --bg-secondary: #ffffff;
-            --text-primary: #2c3e50;
-            --text-secondary: #64748b;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
+            --bg-color: #f8f9fa;
             --card-bg: #ffffff;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --border-color: #e2e8f0;
-            --hover-bg: #f8fafc;
-            --button-bg: #3b82f6;
-            --button-hover: #2563eb;
-            --error-bg: #fee2e2;
-            --error-text: #dc2626;
-            --content-width: min(900px, 90vw);
+            --text-color: #2d3436;
+            --text-secondary: #636e72;
+            --primary-color: #3498db;
+            --hover-color: #2980b9;
+            --border-color: #e9ecef;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --error-bg: #fff5f5;
+            --error-text: #c53030;
+            --accent-color: #00b894;
+            --transition-speed: 0.3s;
         }
 
         [data-theme="dark"] {
-            /* 暗色模式变量 */
-            --bg-primary: #111827;
-            --bg-secondary: #1f2937;
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --accent-color: #60a5fa;
-            --accent-hover: #3b82f6;
-            --card-bg: #1f2937;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --border-color: #374151;
-            --hover-bg: #2d3748;
-            --button-bg: #60a5fa;
-            --button-hover: #3b82f6;
-            --error-bg: #7f1d1d;
-            --error-text: #fecaca;
+            --bg-color: #1a1b1e;
+            --card-bg: #2d2e32;
+            --text-color: #e5e5e5;
+            --text-secondary: #a0a0a0;
+            --primary-color: #4a9eff;
+            --hover-color: #2d8cf0;
+            --border-color: #3f4042;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --error-bg: #2d2020;
+            --error-text: #ff8080;
+            --accent-color: #00b894;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
             margin: 0;
             padding: 20px;
-            background-color: var(--bg-primary);
-            font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
-            color: var(--text-primary);
-            min-height: 100vh;
+            transition: background-color var(--transition-speed) ease,
+                        color var(--transition-speed) ease;
         }
 
         #app {
-            width: var(--content-width);
+            max-width: 900px;
             margin: 0 auto;
-            min-height: calc(100vh - 40px);
-            background: var(--bg-secondary);
+            background: var(--card-bg);
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 8px 30px var(--shadow-color);
+            transition: all var(--transition-speed) ease;
             position: relative;
         }
 
         .theme-toggle {
             position: fixed;
             top: 20px;
-            right: max(20px, calc((100vw - var(--content-width)) / 2));
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
             background: var(--card-bg);
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 4px 12px var(--shadow-color);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-speed) ease;
             z-index: 1000;
-            border: 1px solid var(--border-color);
         }
 
         .theme-toggle:hover {
-            transform: scale(1.1);
-            background: var(--hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-color);
         }
 
         .theme-toggle .mdi {
             font-size: 24px;
-            color: var(--accent-color);
+            color: var(--primary-color);
+            transition: all var(--transition-speed) ease;
         }
 
-        h1 {
+        .site-title {
             font-size: 2.5rem;
-            font-weight: 700;
             text-align: center;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            padding: 0.5rem 0;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 700;
         }
 
         .subtitle {
             text-align: center;
             color: var(--text-secondary);
-            font-size: 1.1rem;
             margin-bottom: 3rem;
+            font-size: 1.1rem;
         }
 
         .novel-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 1.5rem;
-            padding: 1rem;
         }
 
         .novel-link {
@@ -131,85 +120,111 @@
             align-items: flex-start;
             padding: 1.5rem;
             background: var(--card-bg);
-            border-radius: 15px;
-            text-decoration: none;
-            color: var(--text-primary);
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
             border: 1px solid var(--border-color);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all var(--transition-speed) ease;
         }
 
         .novel-link:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            transform: translateX(10px) translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+            border-color: var(--primary-color);
         }
 
         .novel-link .mdi {
-            font-size: 2.5em;
-            margin-right: 1rem;
-            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-right: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .novel-info {
+            flex: 1;
         }
 
         .novel-info h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.4rem;
+            color: var(--text-color);
         }
 
         .novel-info p {
-            font-size: 0.95rem;
             color: var(--text-secondary);
-            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .novel-meta {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.8rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .tag .mdi {
+            font-size: 1rem;
+            margin-right: 0;
         }
 
         .content-wrapper {
             padding: 2rem;
             background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--card-shadow);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .content {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: var(--text-primary);
+            color: var(--text-color);
         }
 
         .content h1, .content h2, .content h3 {
-            color: var(--accent-color);
-            margin: 1.5em 0 0.8em;
+            color: var(--text-color);
+            margin: 2rem 0 1rem;
         }
 
         .content p {
-            margin: 1em 0;
+            margin-bottom: 1.5rem;
         }
 
         .navigation {
             display: flex;
             justify-content: space-between;
-            gap: 1rem;
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--border-color);
+            gap: 1rem;
         }
 
         button {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--button-bg);
+            padding: 0.8rem 1.5rem;
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 1rem;
             font-weight: 500;
+            transition: all var(--transition-speed) ease;
         }
 
         button:hover:not(:disabled) {
-            background: var(--button-hover);
+            background: var(--hover-color);
             transform: translateY(-2px);
         }
 
@@ -231,16 +246,16 @@
             width: 50px;
             height: 50px;
             border: 4px solid var(--border-color);
-            border-top-color: var(--accent-color);
+            border-top-color: var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         .error-message {
             text-align: center;
-            padding: 3rem 2rem;
+            padding: 3rem;
             background: var(--error-bg);
-            border-radius: 15px;
+            border-radius: 16px;
             color: var(--error-text);
         }
 
@@ -249,17 +264,25 @@
             margin-bottom: 1rem;
         }
 
+        .error-message h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .error-message p {
+            margin-bottom: 1.5rem;
+        }
+
         .error-details {
-            margin-top: 1rem;
             font-size: 0.9rem;
             opacity: 0.8;
+            margin-bottom: 1.5rem;
         }
 
         .button-group {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1.5rem;
         }
 
         @keyframes spin {
@@ -272,25 +295,23 @@
             }
 
             #app {
-                padding: 1rem;
+                padding: 1.5rem;
             }
 
-            .theme-toggle {
-                top: 10px;
-                right: 10px;
-            }
-
-            h1 {
+            .site-title {
                 font-size: 2rem;
             }
 
-            .novel-list {
-                grid-template-columns: 1fr;
-                padding: 0.5rem;
+            .novel-link {
+                padding: 1rem;
             }
 
-            .content-wrapper {
-                padding: 1rem;
+            .novel-link .mdi {
+                font-size: 2rem;
+            }
+
+            .content {
+                font-size: 1rem;
             }
 
             .navigation {
@@ -305,32 +326,31 @@
     </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app" :class="{ 'dark-mode': isDarkMode }">
         <!-- 主页面 -->
         <div id="home" v-if="!isReading">
             <div class="theme-toggle" @click="toggleTheme" :title="isDarkMode ? '切换到亮色模式' : '切换到暗色模式'">
                 <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
             </div>
-            <h1>轻小说阅读站</h1>
+            <h1 class="site-title">轻小说阅读站</h1>
             <p class="subtitle">发现你的下一个故事</p>
             <div class="novel-list">
                 <a href="#/溯境仙途/1.md" class="novel-link">
                     <span class="mdi mdi-book"></span>
                     <div class="novel-info">
                         <h3>溯境仙途</h3>
-                        <p>一个关于追寻、成长与超越的修仙故事。主角通过特殊能力不断突破自我，在修仙世界中谱写属于自己的传奇。</p>
+                        <p>一段跨越时空的修仙之旅，主角通过特殊能力不断成长，在修仙世界中谱写传奇...</p>
+                        <div class="novel-meta">
+                            <span class="tag"><i class="mdi mdi-tag"></i>修仙</span>
+                            <span class="tag"><i class="mdi mdi-star"></i>热门</span>
+                        </div>
                     </div>
                 </a>
-                <!-- 可以添加更多小说 -->
             </div>
         </div>
 
         <!-- 阅读页面 -->
         <div id="reader" v-if="isReading">
-            <div class="theme-toggle" @click="toggleTheme" :title="isDarkMode ? '切换到亮色模式' : '切换到暗色模式'">
-                <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
-            </div>
-            
             <!-- 加载动画 -->
             <div class="loading" v-if="isLoading">
                 <div class="spinner"></div>
@@ -339,10 +359,10 @@
 
             <!-- 错误提示 -->
             <div class="error-message" v-if="error">
-                <span class="mdi mdi-alert-circle"></span>
+                <span class="mdi mdi-alert"></span>
                 <h2>加载失败</h2>
                 <p>{{ error }}</p>
-                <p class="error-details" v-if="errorDetails">{{ errorDetails }}</p>
+                <p class="error-details" v-if="errorDetails">错误详情：{{ errorDetails }}</p>
                 <div class="button-group">
                     <button @click="goHome">
                         <span class="mdi mdi-home"></span>返回首页
@@ -384,15 +404,7 @@
                     errorDetails: null,
                     currentChapter: 1,
                     currentNovel: '',
-                    isDarkMode: localStorage.getItem('darkMode') === 'true'
-                }
-            },
-            watch: {
-                isDarkMode: {
-                    immediate: true,
-                    handler(newValue) {
-                        document.documentElement.setAttribute('data-theme', newValue ? 'dark' : 'light')
-                    }
+                    isDarkMode: false
                 }
             },
             methods: {
@@ -417,8 +429,6 @@
                         }
                         
                         this.content = marked.parse(text)
-                        // 滚动到顶部
-                        window.scrollTo({ top: 0, behavior: 'smooth' })
                     } catch (error) {
                         console.error('Error loading content:', error)
                         this.error = '加载章节内容失败'
@@ -457,8 +467,18 @@
                     }
                 },
                 toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode
-                    localStorage.setItem('darkMode', this.isDarkMode)
+                    const html = document.documentElement;
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    html.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    this.isDarkMode = newTheme === 'dark';
+                },
+                initTheme() {
+                    const savedTheme = localStorage.getItem('theme') || 'light';
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                    this.isDarkMode = savedTheme === 'dark';
                 },
                 retryLoad() {
                     const currentPath = decodeURIComponent(window.location.hash.slice(1))
@@ -466,11 +486,9 @@
                 }
             },
             mounted() {
-                this.handleHashChange()
-                window.addEventListener('hashchange', this.handleHashChange)
-            },
-            beforeUnmount() {
-                window.removeEventListener('hashchange', this.handleHashChange)
+                this.initTheme();
+                this.handleHashChange();
+                window.addEventListener('hashchange', this.handleHashChange);
             }
         }).mount('#app')
     </script>
