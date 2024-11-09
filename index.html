@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轻小说阅读器</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 主页面 -->
+        <div id="home" v-if="!isReading">
+            <h1>欢迎来到轻小说阅读站</h1>
+            <div class="novel-list">
+                <a href="#/novel1/1.md" class="novel-link">
+                    <span class="mdi mdi-book"></span>小说系列一
+                </a>
+                <a href="#/novel2/1.md" class="novel-link">
+                    <span class="mdi mdi-book"></span>小说系列二
+                </a>
+                <!-- 可以继续添加更多链接 -->
+            </div>
+        </div>
+
+        <!-- 阅读页面 -->
+        <div id="reader" v-if="isReading">
+            <div class="content" v-html="content"></div>
+            <div class="navigation">
+                <button @click="prevChapter" :disabled="currentChapter <= 1">
+                    <span class="mdi mdi-chevron-left"></span>上一章
+                </button>
+                <button @click="goHome">
+                    <span class="mdi mdi-home"></span>返回首页
+                </button>
+                <button @click="nextChapter">
+                    下一章<span class="mdi mdi-chevron-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
+    <script>
+        const { createApp } = Vue
+        
+        createApp({
+            data() {
+                return {
+                    content: '',
+                    isReading: false,
+                    currentChapter: 1,
+                    currentNovel: '',
+                    md: new markdownit()
+                }
+            },
+            methods: {
+                async loadContent(path) {
+                    try {
+                        const response = await fetch(path)
+                        const text = await response.text()
+                        this.content = this.md.render(text)
+                    } catch (error) {
+                        this.content = '<p>章节加载失败...</p>'
+                    }
+                },
+                goHome() {
+                    this.isReading = false
+                    window.location.hash = ''
+                },
+                prevChapter() {
+                    if (this.currentChapter > 1) {
+                        this.currentChapter--
+                        window.location.hash = `#/${this.currentNovel}/${this.currentChapter}.md`
+                    }
+                },
+                nextChapter() {
+                    this.currentChapter++
+                    window.location.hash = `#/${this.currentNovel}/${this.currentChapter}.md`
+                },
+                handleHashChange() {
+                    const hash = window.location.hash
+                    if (hash && hash.endsWith('.md')) {
+                        this.isReading = true
+                        const parts = hash.slice(2).split('/')
+                        this.currentNovel = parts[0]
+                        this.currentChapter = parseInt(parts[1])
+                        this.loadContent(hash.slice(1))
+                    } else {
+                        this.isReading = false
+                    }
+                }
+            },
+            mounted() {
+                this.handleHashChange()
+                window.addEventListener('hashchange', this.handleHashChange)
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
