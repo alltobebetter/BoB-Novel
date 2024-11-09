@@ -183,6 +183,19 @@
             margin-bottom: 20px;
         }
 
+        .error-details {
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -229,7 +242,6 @@
                         <p>简介：修仙文，主角通过特殊能力不断变强...</p>
                     </div>
                 </a>
-                <!-- 可以继续添加更多小说链接 -->
             </div>
         </div>
 
@@ -244,9 +256,13 @@
             <!-- 错误提示 -->
             <div class="error-message" v-if="error">
                 <span class="mdi mdi-alert"></span>
-                <h2>很抱歉，页面未找到</h2>
+                <h2>加载失败</h2>
                 <p>{{ error }}</p>
-                <button @click="goHome">返回首页</button>
+                <p class="error-details" v-if="errorDetails">错误详情：{{ errorDetails }}</p>
+                <div class="button-group">
+                    <button @click="goHome">返回首页</button>
+                    <button @click="retryLoad">重试</button>
+                </div>
             </div>
 
             <!-- 内容区域 -->
@@ -277,6 +293,7 @@
                     isReading: false,
                     isLoading: false,
                     error: null,
+                    errorDetails: null,
                     currentChapter: 1,
                     currentNovel: '',
                     isDarkMode: localStorage.getItem('darkMode') === 'true'
@@ -286,20 +303,31 @@
                 async loadContent(path) {
                     this.isLoading = true
                     this.error = null
+                    this.errorDetails = null
                     
                     try {
-                        // 根据实际情况修改基础URL
-                        const baseUrl = 'https://raw.githubusercontent.com/aibob2008/novel/main'
+                        const baseUrl = 'https://bob-novel.vercel.app'
                         const fullPath = `${baseUrl}${path}`
+                        console.log('Loading from:', fullPath) // 调试用
+
                         const response = await fetch(fullPath)
                         if (!response.ok) {
-                            throw new Error('这个章节还没有写完，请稍后再来~')
+                            throw new Error(`HTTP error! status: ${response.status}`)
                         }
                         const text = await response.text()
+                        
+                        // 调试信息
+                        console.log('Content loaded:', text.substring(0, 100) + '...')
+                        
+                        if (!text || text.trim() === '') {
+                            throw new Error('章节内容为空')
+                        }
+                        
                         this.content = marked.parse(text)
                     } catch (error) {
                         console.error('Error loading content:', error)
-                        this.error = '这个章节可能还没有写完，请稍后再来~'
+                        this.error = '加载章节内容失败'
+                        this.errorDetails = error.message
                     } finally {
                         this.isLoading = false
                     }
@@ -307,6 +335,7 @@
                 goHome() {
                     this.isReading = false
                     this.error = null
+                    this.errorDetails = null
                     window.location.hash = ''
                 },
                 prevChapter() {
@@ -335,6 +364,10 @@
                 toggleTheme() {
                     this.isDarkMode = !this.isDarkMode
                     localStorage.setItem('darkMode', this.isDarkMode)
+                },
+                retryLoad() {
+                    const currentPath = decodeURIComponent(window.location.hash.slice(1))
+                    this.loadContent(currentPath)
                 }
             },
             mounted() {
