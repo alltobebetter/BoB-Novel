@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+    padding: 20px;
+    background-color: #f5e6d3;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.6;
+}
+
+#app {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 40px;
+}
+
+.novel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.novel-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+}
+
+.novel-link:hover {
+    background: #e9ecef;
+    transform: translateX(10px);
+}
+
+.novel-link .mdi {
+    margin-right: 10px;
+    color: #6c757d;
+}
+
+.content {
+    min-height: 70vh;
+    line-height: 1.8;
+    font-size: 18px;
+    color: #333;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 20px;
+    border: none;
+    background: #4a5568;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #2d3748;
+}
+
+button:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    #app {
+        padding: 15px;
+    }
+    
+    .content {
+        font-size: 16px;
+    }
+    
+    .navigation {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    button {
+        width: 100%;
+        justify-content: center;
+    }
+}
