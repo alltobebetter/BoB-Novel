@@ -22,18 +22,20 @@
             --secondary-text: #64748b;
         }
 
-        .dark-mode {
-            --bg-color: #0f172a;
-            --text-color: #e2e8f0;
-            --card-bg: #1e293b;
-            --shadow-color: rgba(0, 0, 0, 0.3);
-            --hover-bg: #334155;
-            --button-bg: #6366f1;
-            --button-hover: #4f46e5;
-            --error-bg: #450a0a;
-            --error-text: #fca5a5;
-            --border-color: #334155;
-            --secondary-text: #94a3b8;
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #e2e8f0;
+                --card-bg: #1e293b;
+                --shadow-color: rgba(0, 0, 0, 0.3);
+                --hover-bg: #334155;
+                --button-bg: #6366f1;
+                --button-hover: #4f46e5;
+                --error-bg: #450a0a;
+                --error-text: #fca5a5;
+                --border-color: #334155;
+                --secondary-text: #94a3b8;
+            }
         }
 
         * {
@@ -62,31 +64,6 @@
             padding: 30px;
             border-radius: 20px;
             position: relative;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: 12px;
-            border-radius: 50%;
-            background: var(--card-bg);
-            box-shadow: 0 4px 12px var(--shadow-color);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(30deg);
-        }
-
-        .theme-toggle .mdi {
-            font-size: 1.5rem;
-            color: var(--text-color);
         }
 
         h1 {
@@ -287,20 +264,11 @@
                 font-size: 2em;
                 margin-right: 16px;
             }
-
-            .theme-toggle {
-                top: 16px;
-                right: 16px;
-            }
         }
     </style>
 </head>
 <body>
-    <div id="app" :class="{ 'dark-mode': isDarkMode }">
-        <div class="theme-toggle" @click="toggleTheme">
-            <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
-        </div>
-
+    <div id="app">
         <!-- 主页面 -->
         <div id="home" v-if="!isReading">
             <h1>轻小说阅读站</h1>
@@ -370,8 +338,7 @@
                     error: null,
                     errorDetails: null,
                     currentChapter: 1,
-                    currentNovel: '',
-                    isDarkMode: localStorage.getItem('darkMode') === 'true'
+                    currentNovel: ''
                 }
             },
             methods: {
@@ -432,32 +399,12 @@
                         this.isReading = false
                     }
                 },
-                toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode
-                    localStorage.setItem('darkMode', this.isDarkMode.toString())
-                },
                 retryLoad() {
                     const currentPath = decodeURIComponent(window.location.hash.slice(1))
                     this.loadContent(currentPath)
                 }
             },
             mounted() {
-                // 从 localStorage 读取主题设置
-                const savedTheme = localStorage.getItem('darkMode');
-                if (savedTheme !== null) {
-                    this.isDarkMode = savedTheme === 'true';
-                } else {
-                    // 如果没有保存的设置，则使用系统主题
-                    this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                }
-                
-                // 监听系统主题变化
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                    if (localStorage.getItem('darkMode') === null) {
-                        this.isDarkMode = e.matches;
-                    }
-                });
-                
                 this.handleHashChange()
                 window.addEventListener('hashchange', this.handleHashChange)
             }
