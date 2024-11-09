@@ -5,7 +5,212 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>轻小说阅读器</title>
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f5e6d3;
+            --text-color: #2c3e50;
+            --card-bg: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --hover-bg: #e9ecef;
+            --button-bg: #4a5568;
+            --button-hover: #2d3748;
+            --error-bg: #fee2e2;
+            --error-text: #dc2626;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #e5e5e5;
+            --card-bg: #2d2d2d;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --hover-bg: #3d3d3d;
+            --button-bg: #4a5568;
+            --button-hover: #2d3748;
+            --error-bg: #7f1d1d;
+            --error-text: #fecaca;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        .novel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .novel-link {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .novel-link:hover {
+            transform: translateX(10px);
+            background: var(--hover-bg);
+        }
+
+        .novel-link .mdi {
+            font-size: 2em;
+            margin-right: 20px;
+        }
+
+        .novel-info h3 {
+            margin: 0 0 5px 0;
+        }
+
+        .novel-info p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .content {
+            min-height: 70vh;
+            line-height: 1.8;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--shadow-color);
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 24px;
+            border: none;
+            background: var(--button-bg);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--shadow-color);
+            border-top-color: var(--button-bg);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            background: var(--error-bg);
+            border-radius: 12px;
+            color: var(--error-text);
+        }
+
+        .error-message .mdi {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            #app {
+                padding: 15px;
+            }
+            
+            .content {
+                font-size: 16px;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="app" :class="{ 'dark-mode': isDarkMode }">
@@ -17,20 +222,14 @@
             <h1>轻小说阅读站</h1>
             <p class="subtitle">选择您想阅读的小说系列</p>
             <div class="novel-list">
-                <a href="#/novel1/1.md" class="novel-link">
+                <a href="#/溯境仙途/1.md" class="novel-link">
                     <span class="mdi mdi-book"></span>
                     <div class="novel-info">
-                        <h3>小说系列一</h3>
-                        <p>简介：这是第一个小说系列的简介...</p>
+                        <h3>溯境仙途</h3>
+                        <p>简介：修仙文，主角通过特殊能力不断变强...</p>
                     </div>
                 </a>
-                <a href="#/novel2/1.md" class="novel-link">
-                    <span class="mdi mdi-book"></span>
-                    <div class="novel-info">
-                        <h3>小说系列二</h3>
-                        <p>简介：这是第二个小说系列的简介...</p>
-                    </div>
-                </a>
+                <!-- 可以继续添加更多小说链接 -->
             </div>
         </div>
 
@@ -68,8 +267,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         const { createApp } = Vue
         
@@ -91,14 +288,18 @@
                     this.error = null
                     
                     try {
-                        const response = await fetch(path)
+                        // 根据实际情况修改基础URL
+                        const baseUrl = 'https://raw.githubusercontent.com/aibob2008/novel/main'
+                        const fullPath = `${baseUrl}${path}`
+                        const response = await fetch(fullPath)
                         if (!response.ok) {
                             throw new Error('这个章节还没有写完，请稍后再来~')
                         }
                         const text = await response.text()
-                        this.content = marked(text)
+                        this.content = marked.parse(text)
                     } catch (error) {
-                        this.error = error.message
+                        console.error('Error loading content:', error)
+                        this.error = '这个章节可能还没有写完，请稍后再来~'
                     } finally {
                         this.isLoading = false
                     }
@@ -125,7 +326,8 @@
                         const parts = hash.slice(2).split('/')
                         this.currentNovel = parts[0]
                         this.currentChapter = parseInt(parts[1])
-                        this.loadContent(hash.slice(1))
+                        const decodedPath = decodeURIComponent(hash.slice(1))
+                        this.loadContent(decodedPath)
                     } else {
                         this.isReading = false
                     }
