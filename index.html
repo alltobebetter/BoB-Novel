@@ -9,228 +9,188 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            /* 亮色模式变量 */
             --bg-color: #f8f9fa;
+            --text-color: #2d3748;
             --card-bg: #ffffff;
-            --text-color: #2d3436;
-            --text-secondary: #636e72;
-            --primary-color: #3498db;
-            --hover-color: #2980b9;
-            --border-color: #e9ecef;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --error-bg: #fff5f5;
-            --error-text: #c53030;
-            --accent-color: #00b894;
-            --transition-speed: 0.3s;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --hover-bg: #f1f5f9;
+            --button-bg: #4f46e5;
+            --button-hover: #4338ca;
+            --error-bg: #fef2f2;
+            --error-text: #dc2626;
+            --border-color: #e2e8f0;
+            --secondary-text: #64748b;
         }
 
-        [data-theme="dark"] {
-            --bg-color: #1a1b1e;
-            --card-bg: #2d2e32;
-            --text-color: #e5e5e5;
-            --text-secondary: #a0a0a0;
-            --primary-color: #4a9eff;
-            --hover-color: #2d8cf0;
-            --border-color: #3f4042;
+        .dark-mode {
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --card-bg: #1e293b;
             --shadow-color: rgba(0, 0, 0, 0.3);
-            --error-bg: #2d2020;
-            --error-text: #ff8080;
-            --accent-color: #00b894;
+            --hover-bg: #334155;
+            --button-bg: #6366f1;
+            --button-hover: #4f46e5;
+            --error-bg: #450a0a;
+            --error-text: #fca5a5;
+            --border-color: #334155;
+            --secondary-text: #94a3b8;
         }
 
         * {
-            box-sizing: border-box;
+            transition: background-color 0.3s ease, 
+                        color 0.3s ease, 
+                        border-color 0.3s ease, 
+                        box-shadow 0.3s ease;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
             padding: 20px;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             line-height: 1.6;
-            transition: background-color var(--transition-speed) ease,
-                        color var(--transition-speed) ease;
+            color: var(--text-color);
+            min-height: 100vh;
         }
 
         #app {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
-            background: var(--card-bg);
-            padding: 2rem;
+            padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 8px 30px var(--shadow-color);
-            transition: all var(--transition-speed) ease;
             position: relative;
         }
 
         .theme-toggle {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
+            top: 24px;
+            right: 24px;
+            padding: 12px;
+            border-radius: 50%;
             background: var(--card-bg);
             box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-speed) ease;
-            z-index: 1000;
         }
 
         .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px var(--shadow-color);
+            transform: rotate(30deg);
         }
 
         .theme-toggle .mdi {
-            font-size: 24px;
-            color: var(--primary-color);
-            transition: all var(--transition-speed) ease;
+            font-size: 1.5rem;
+            color: var(--text-color);
         }
 
-        .site-title {
-            font-size: 2.5rem;
+        h1 {
             text-align: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 16px;
             color: var(--text-color);
+            font-size: 2.5rem;
             font-weight: 700;
         }
 
         .subtitle {
             text-align: center;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
+            color: var(--secondary-text);
+            margin-bottom: 40px;
             font-size: 1.1rem;
         }
 
         .novel-list {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 20px;
         }
 
         .novel-link {
             display: flex;
-            align-items: flex-start;
-            padding: 1.5rem;
+            align-items: center;
+            padding: 24px;
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
             border-radius: 16px;
             text-decoration: none;
             color: var(--text-color);
-            transition: all var(--transition-speed) ease;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transform: translateY(0);
         }
 
         .novel-link:hover {
-            transform: translateX(10px) translateY(-2px);
-            box-shadow: 0 8px 20px var(--shadow-color);
-            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px var(--shadow-color);
+            border-color: var(--button-bg);
         }
 
         .novel-link .mdi {
-            font-size: 2.5rem;
-            margin-right: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .novel-info {
-            flex: 1;
+            font-size: 2.5em;
+            margin-right: 24px;
+            color: var(--button-bg);
         }
 
         .novel-info h3 {
-            margin: 0 0 0.5rem 0;
+            margin: 0 0 8px 0;
             font-size: 1.4rem;
-            color: var(--text-color);
         }
 
         .novel-info p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
+            margin: 0;
             font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .novel-meta {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.3rem 0.8rem;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .tag .mdi {
-            font-size: 1rem;
-            margin-right: 0;
-        }
-
-        .content-wrapper {
-            padding: 2rem;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px var(--shadow-color);
+            color: var(--secondary-text);
         }
 
         .content {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            margin: 24px 0;
             font-size: 1.1rem;
             line-height: 1.8;
-            color: var(--text-color);
-        }
-
-        .content h1, .content h2, .content h3 {
-            color: var(--text-color);
-            margin: 2rem 0 1rem;
-        }
-
-        .content p {
-            margin-bottom: 1.5rem;
+            min-height: 70vh;
         }
 
         .navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
+            margin-top: 30px;
+            padding-top: 20px;
             border-top: 1px solid var(--border-color);
-            gap: 1rem;
         }
 
         button {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.8rem 1.5rem;
-            background: var(--primary-color);
-            color: white;
+            gap: 8px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 10px;
+            background: var(--button-bg);
+            color: white;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 1rem;
             font-weight: 500;
-            transition: all var(--transition-speed) ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            font-size: 1rem;
         }
 
         button:hover:not(:disabled) {
-            background: var(--hover-color);
+            background: var(--button-hover);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
         }
 
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
 
         .loading {
@@ -238,112 +198,110 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 50vh;
-            gap: 1rem;
+            min-height: 70vh;
+            gap: 16px;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--primary-color);
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--button-bg);
+            border-top-color: transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         .error-message {
             text-align: center;
-            padding: 3rem;
+            padding: 40px;
             background: var(--error-bg);
             border-radius: 16px;
             color: var(--error-text);
+            margin: 24px 0;
         }
 
         .error-message .mdi {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .error-message h2 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .error-message p {
-            margin-bottom: 1.5rem;
+            font-size: 48px;
+            margin-bottom: 16px;
         }
 
         .error-details {
+            margin-top: 16px;
             font-size: 0.9rem;
             opacity: 0.8;
-            margin-bottom: 1.5rem;
         }
 
         .button-group {
             display: flex;
-            gap: 1rem;
+            gap: 16px;
             justify-content: center;
+            margin-top: 24px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 16px;
             }
-
+            
             #app {
-                padding: 1.5rem;
+                padding: 20px;
+            }
+            
+            .content {
+                padding: 24px;
+                font-size: 1rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
             }
 
-            .site-title {
+            h1 {
                 font-size: 2rem;
             }
 
             .novel-link {
-                padding: 1rem;
+                padding: 16px;
             }
 
             .novel-link .mdi {
-                font-size: 2rem;
+                font-size: 2em;
+                margin-right: 16px;
             }
 
-            .content {
-                font-size: 1rem;
-            }
-
-            .navigation {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-                justify-content: center;
+            .theme-toggle {
+                top: 16px;
+                right: 16px;
             }
         }
     </style>
 </head>
 <body>
     <div id="app" :class="{ 'dark-mode': isDarkMode }">
+        <div class="theme-toggle" @click="toggleTheme">
+            <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
+        </div>
+
         <!-- 主页面 -->
         <div id="home" v-if="!isReading">
-            <div class="theme-toggle" @click="toggleTheme" :title="isDarkMode ? '切换到亮色模式' : '切换到暗色模式'">
-                <span class="mdi" :class="isDarkMode ? 'mdi-weather-sunny' : 'mdi-weather-night'"></span>
-            </div>
-            <h1 class="site-title">轻小说阅读站</h1>
-            <p class="subtitle">发现你的下一个故事</p>
+            <h1>轻小说阅读站</h1>
+            <p class="subtitle">选择您想阅读的小说系列</p>
             <div class="novel-list">
                 <a href="#/溯境仙途/1.md" class="novel-link">
                     <span class="mdi mdi-book"></span>
                     <div class="novel-info">
                         <h3>溯境仙途</h3>
-                        <p>一段跨越时空的修仙之旅，主角通过特殊能力不断成长，在修仙世界中谱写传奇...</p>
-                        <div class="novel-meta">
-                            <span class="tag"><i class="mdi mdi-tag"></i>修仙</span>
-                            <span class="tag"><i class="mdi mdi-star"></i>热门</span>
-                        </div>
+                        <p>简介：修仙文，主角通过特殊能力不断变强...</p>
                     </div>
                 </a>
             </div>
@@ -354,7 +312,7 @@
             <!-- 加载动画 -->
             <div class="loading" v-if="isLoading">
                 <div class="spinner"></div>
-                <p>正在加载章节内容...</p>
+                <p>正在加载...</p>
             </div>
 
             <!-- 错误提示 -->
@@ -404,7 +362,7 @@
                     errorDetails: null,
                     currentChapter: 1,
                     currentNovel: '',
-                    isDarkMode: false
+                    isDarkMode: localStorage.getItem('darkMode') === 'true'
                 }
             },
             methods: {
@@ -416,8 +374,7 @@
                     try {
                         const baseUrl = 'https://bob-novel.vercel.app'
                         const fullPath = `${baseUrl}${path}`
-                        console.log('Loading from:', fullPath)
-
+                        
                         const response = await fetch(fullPath)
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`)
@@ -467,18 +424,8 @@
                     }
                 },
                 toggleTheme() {
-                    const html = document.documentElement;
-                    const currentTheme = html.getAttribute('data-theme');
-                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    
-                    html.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    this.isDarkMode = newTheme === 'dark';
-                },
-                initTheme() {
-                    const savedTheme = localStorage.getItem('theme') || 'light';
-                    document.documentElement.setAttribute('data-theme', savedTheme);
-                    this.isDarkMode = savedTheme === 'dark';
+                    this.isDarkMode = !this.isDarkMode
+                    localStorage.setItem('darkMode', this.isDarkMode)
                 },
                 retryLoad() {
                     const currentPath = decodeURIComponent(window.location.hash.slice(1))
@@ -486,9 +433,18 @@
                 }
             },
             mounted() {
-                this.initTheme();
-                this.handleHashChange();
-                window.addEventListener('hashchange', this.handleHashChange);
+                // 检测系统主题偏好
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    this.isDarkMode = true;
+                }
+                
+                // 监听系统主题变化
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                    this.isDarkMode = e.matches;
+                });
+                
+                this.handleHashChange()
+                window.addEventListener('hashchange', this.handleHashChange)
             }
         }).mount('#app')
     </script>
